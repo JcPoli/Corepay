@@ -21,6 +21,8 @@
     <!-- 17 is the LTS floor: the jar runs unchanged on 17, 21 or newer. -->
     <java.version>17</java.version>
     <springdoc.version>2.6.0</springdoc.version>
+    <tomcat.version>10.1.55</tomcat.version>
+    <postgresql.version>42.7.12</postgresql.version>
   </properties>
 
   <dependencies>
