@@ -1,3 +1,5 @@
+[![CI](https://github.com/JcPoli/Corepay/actions/workflows/ci.yml/badge.svg)](https://github.com/JcPoli/Corepay/actions/workflows/ci.yml)
+
 # corepay
 
 A payments core with a double-entry ledger, written to show how money
@@ -7,7 +9,16 @@ Built with Java 17, Spring Boot 3, PostgreSQL and Flyway, tested against a
 real database with Testcontainers, containerised, and scanned for
 vulnerabilities in CI with Trivy.
 
-Live API and Swagger UI: _add your Render URL here_ → `/swagger-ui.html`
+Live API and Swagger UI: <https://corepay-4yem.onrender.com/swagger-ui.html>
+
+It runs on a free Render instance, which sleeps when idle: the first request
+after a quiet spell takes about a minute while the container wakes. Demo
+credentials — `POST /api/v1/auth/token`, then **Authorize**:
+
+| User      | Password       | Scopes          |
+| --------- | -------------- | --------------- |
+| `teller`  | `teller-demo`  | read and write  |
+| `auditor` | `auditor-demo` | read only       |
 
 ---
 
@@ -140,18 +151,22 @@ demands a version newer than Spring Boot manages, the dependency is pinned
 explicitly — see the `tomcat.version` and `postgresql.version` properties in
 `pom.xml`.
 
-The initial scan reported 40 findings. Upgrading Spring Boot and pinning
-Tomcat and pgjdbc cleared 37 of them. The remaining three are Tomcat CVEs
-with no published fix, accepted in `.trivyignore` with the reason each is
-unreachable in this service and a review date. A suppression here is a
-decision with an owner and an expiry, not a way to silence the pipeline.
+The initial scan reported 40 findings. Upgrading Spring Boot to 3.5.16 and
+pinning `tomcat.version` and `postgresql.version` cleared 37 of them. The
+remaining three are Tomcat CVEs with no published fix — 10.1.55 is the latest
+10.1.x, and the quoted fix versions are not released — so they are accepted in
+`.trivyignore`, each with the reason it is unreachable here (authentication is
+stateless JWT bearer tokens; the DIGEST and FORM authenticators and web.xml
+security constraints those CVEs concern are never configured) and a review
+date. A suppression is a decision with an owner and an expiry, not a way to
+silence the pipeline.
 
 ## Deploying
 
 `render.yaml` is a Render blueprint: it builds the Dockerfile, provisions a
 PostgreSQL, injects the connection string, and generates a JWT secret. Free
 instances sleep when idle, so the first request after a quiet spell takes
-roughly half a minute.
+about a minute.
 
 Any container host works the same way — the app needs `DATABASE_URL`,
 `DATABASE_USER`, `DATABASE_PASSWORD` and `JWT_SECRET`, and exposes
