@@ -1,0 +1,19 @@
+# Accepted vulnerabilities, with justification and an expiry.
+# Reviewed: 2026-09-13    Next review: 2026-12-13
+#
+# Policy: HIGH and CRITICAL findings fail the pipeline, and ignore-unfixed is
+# on — so only findings with a released fix can break the build. A finding is
+# accepted here only when both hold: there is no released fix, and the
+# vulnerable code path is not reachable in this service.
+#
+# Apache Tomcat: 10.1.55 is the latest release in the 10.1.x line; the fix
+# versions quoted below (10.1.58, 11.0.25) are not published yet. All three
+# findings concern authentication and security-constraint mechanisms corepay
+# does not use. Authentication is stateless JWT bearer tokens validated by
+# Spring Security's OAuth2 resource server; the DIGEST and FORM authenticators
+# are never configured, and there is no web.xml declaring security
+# constraints — authorisation is expressed entirely in SecurityConfig.
+# Action: bump tomcat.version as soon as 10.1.58 ships, then delete this file.
+CVE-2026-65182
+CVE-2026-65905
+CVE-2026-68525

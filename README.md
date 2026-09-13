@@ -132,6 +132,20 @@ dependencies, secrets and misconfiguration, and an image scan of the built
 container. Both fail the pipeline on HIGH or CRITICAL, and image findings are
 uploaded as SARIF so they appear in the repository's Security tab.
 
+## Vulnerability posture
+
+CI fails the build on HIGH and CRITICAL findings, with `ignore-unfixed`
+enabled so only findings with a released fix can break it. Where a CVE
+demands a version newer than Spring Boot manages, the dependency is pinned
+explicitly — see the `tomcat.version` and `postgresql.version` properties in
+`pom.xml`.
+
+The initial scan reported 40 findings. Upgrading Spring Boot and pinning
+Tomcat and pgjdbc cleared 37 of them. The remaining three are Tomcat CVEs
+with no published fix, accepted in `.trivyignore` with the reason each is
+unreachable in this service and a review date. A suppression here is a
+decision with an owner and an expiry, not a way to silence the pipeline.
+
 ## Deploying
 
 `render.yaml` is a Render blueprint: it builds the Dockerfile, provisions a
