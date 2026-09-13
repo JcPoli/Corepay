@@ -1,0 +1,36 @@
+# Render blueprint. Point Render at this repo and it builds the Dockerfile,
+# provisions Postgres, and wires DATABASE_URL in.
+#
+# Note: free instances sleep when idle, so the first request after a quiet
+# spell takes around half a minute to answer.
+services:
+  - type: web
+    name: corepay
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health/readiness
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: corepay-db
+          property: connectionString
+      - key: DATABASE_USER
+        fromDatabase:
+          name: corepay-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: corepay-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TELLER_PASSWORD
+        sync: false
+      - key: AUDITOR_PASSWORD
+        sync: false
+
+databases:
+  - name: corepay-db
+    plan: free
+    databaseName: corepay
+    user: corepay

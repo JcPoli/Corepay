@@ -1,0 +1,13 @@
+target/
+build/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+*.class
+*.log
+.env
+.env.*
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
